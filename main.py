@@ -2,7 +2,6 @@
 import copy
 from sudoku_generator import SudokuGenerator
 #from sudoku_generator import generate_sudoku
-
 # Method to display the user's choice menu
 def user_menu():
   print()
@@ -29,13 +28,27 @@ print("Welcome to Sudoku!")
 print("1. Easy")
 print("2. Medium")
 print("3. Hard")
-choice = int(input("Select Game Mode: "))
+
+choice_is_valid = False
+while choice_is_valid == False:
+  try:
+    choice = int(input("Select Game Mode: "))
+    if choice != 1 and choice != 2 and choice != 3 and choice !=4:
+      raise ValueError
+    choice_is_valid = True
+  except ValueError:
+    print("Error. Enter a single digit value 1-3")
+  except NameError:
+    print("Error. Enter a single digit value 1-3")
+
 if choice == 1:
     difficulty = 30
 elif choice == 2:
     difficulty = 40
 elif choice == 3:
     difficulty = 50
+elif choice == 4:
+    difficulty = 1
 else:
     print("Invalid selection!")
     restart = True
@@ -45,7 +58,7 @@ sudoku_obj = SudokuGenerator(9, difficulty)
 sudoku_obj.fill_values()
 # Create a copy of the solved Sudoku board for this game that can be used for testing win condition
 solved_board = copy.deepcopy(sudoku_obj.get_board())
-display_solved_board()
+#display_solved_board()
 
 
 # This call for the board is unnecessary now. Just commenting before testing to make sure before I delete it.
@@ -56,7 +69,10 @@ display_solved_board()
 sudoku_obj.remove_cells()
 
 # Create a copy of the board that will be updated based on the user inputs
+#displayed board
 board = copy.deepcopy(sudoku_obj.get_board())
+#Background board
+data_board = copy.deepcopy(sudoku_obj.get_board())
 
 # Preserve a copy of the unmodified board for tracking valid cells for user update which are cells that started with 0s
 unmodified_board = copy.deepcopy(sudoku_obj.get_board())
@@ -68,12 +84,16 @@ while game_over == False:
   display_user_board()
   
   user_menu()
-  answer = int(input('Enter your choice: '))
+  try:
+    answer = int(input('Enter your choice: '))
+  except ValueError:
+    print("Error. Enter a single digit value 1-4")
+    
 
   # Attempt to 'sketch' in the user value
   if answer == 1:
-    row = int(input('Enter the row of the cell you would like to modify: '))
-    col = int(input('Enter the column of the cell you would like to modify: '))
+    row = int(input('Enter the row of the cell you would like to modify: ')) - 1
+    col = int(input('Enter the column of the cell you would like to modify: ')) - 1
     if unmodified_board[row][col] != 0:
       print("Invalid cell!")
     else:
@@ -87,7 +107,8 @@ while game_over == False:
           else:
               print("Error. Enter a single digit value 1-9")
       # Creating an exception for catching a character string for user input
-          board[row][col] = "'" + new_cell + "'"
+          board[row][col] =  "'" + new_cell + "'"
+          data_board[row][col] = int(new_cell)
       except ValueError:
         new_cell == str(0)
         print("Error. Enter a single digit value 1-9")
@@ -101,7 +122,8 @@ while game_over == False:
         if len(cell) > 1:
           # Stripping the sketch indicators off of each user input cell by taking just the middle (number) value of the cell string
           cell = cell[1]
-    if board == solved_board:
+        cell = int(cell)
+    if data_board == solved_board:
       print('You win!')
       game_over = True
     else:
