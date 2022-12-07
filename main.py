@@ -81,19 +81,51 @@ unmodified_board = copy.deepcopy(sudoku_obj.get_board())
 game_over = False
 while game_over == False:
   # Printing the update board based on user previous inputs
-  display_user_board()
-  
-  user_menu()
-  try:
-    answer = int(input('Enter your choice: '))
-  except ValueError:
-    print("Error. Enter a single digit value 1-4")
+  menu_choice_is_valid = False
+  while menu_choice_is_valid == False:
+    display_user_board()
+    user_menu()
+    try:
+      answer = int(input('Enter your choice: '))
+      menu_choice_is_valid = True
+    except NameError:
+          print("Error. Enter a single digit value 1-4")
+    except ValueError:
+      print("Error. Enter a single digit value 1-4")
     
 
   # Attempt to 'sketch' in the user value
   if answer == 1:
-    row = int(input('Enter the row of the cell you would like to modify: ')) - 1
-    col = int(input('Enter the column of the cell you would like to modify: ')) - 1
+    valid_row_choice = False
+    valid_col_choice = False
+    while valid_row_choice == False or valid_col_choice == False:
+      try:
+        row = int(input('Enter the row of the cell you would like to modify: ')) - 1
+        if 0<= row <= 8:
+          valid_row_choice = True
+        else:
+          raise ValueError
+      except ValueError:
+        print("Error. Must be a single digit value 1-9")
+        print()
+      except NameError:
+        print("Error. Must be a single digit value 1-9")
+        print()
+      try:
+        col = int(input('Enter the column of the cell you would like to modify: ')) - 1
+        if 0<= col <= 8:
+          valid_col_choice = True
+        else:
+          raise ValueError
+      except ValueError:
+        print("Error. Must be a single digit value 1-9")
+        print()
+      except NameError:
+        print("Error. Must be a single digit value 1-9")
+        print()
+
+
+        
     if unmodified_board[row][col] != 0:
       print("Invalid cell!")
     else:
